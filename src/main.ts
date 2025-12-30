@@ -1,0 +1,17 @@
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
+import cookieParser from 'cookie-parser';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  //----> Apply cookie-parser middleware
+  app.use(cookieParser());
+  app.setGlobalPrefix('api');
+  app.enableCors(['http://localhost:4200', 'http://localhost:5173']);
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+  await app.listen(process.env.PORT ?? 3000);
+}
+void bootstrap().then(() =>
+  console.log(`App is running on port ${process.env.PORT}`),
+);
