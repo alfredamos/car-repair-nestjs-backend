@@ -48,15 +48,16 @@ export class AuthController {
     const session = await this.authService.loginUser(loginDto, res);
 
     //-----> Attach tokenJwt to req.user;
-    const tokenJwt: TokenJwt = {
-      id: session.id,
-      name: session.name,
-      email: session.email,
-      role: session.role,
-    };
-    req.user = {...tokenJwt};
-    console.log('I have loggedIn, user : ', req.user);
-
+    if (session.isLoggedIn){
+      const tokenJwt: TokenJwt = {
+        id: session.id,
+        name: session.name,
+        email: session.email,
+        role: session.role,
+      };
+      req.user = { ...tokenJwt };
+    }
+    
     //----> Send back access-token;
     res.status(StatusCodes.OK).json(session);
   }
@@ -71,11 +72,12 @@ export class AuthController {
       : '';
 
     //----> Logout user.
-    await this.authService.logoutUser(req, res);
+    const response = await this.authService.logoutUser(req, res);
 
     //----> Remove the tokenJwt from req.user;
-    req.user = null;
-    console.log('I have logged out, user : ', req.user);
+    if (response.statusCode === StatusCodes.OK){
+      req.user = null;
+    }
 
     //----> send back the response.
     res
