@@ -8,10 +8,6 @@ export class EditUserProfile {
 
     @IsNotEmpty()
     @IsString()
-    address: string;
-
-    @IsNotEmpty()
-    @IsString()
     @IsEmail()
     email: string;
 
@@ -31,11 +27,7 @@ export class EditUserProfile {
     @IsString()
     password: string;
 
-    @IsNotEmpty()
-    @IsString()
-    dateOfBirth: Date;
-
-    @IsNotEmpty()
-    @IsEnum(Role)
-    role: Role;
+    // @IsNotEmpty()
+    // @IsEnum(Role)
+    // role: Role;
 }

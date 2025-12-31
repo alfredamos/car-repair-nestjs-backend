@@ -1,24 +1,18 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Res,
-  Req,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Res, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { StatusCodes } from 'http-status-codes';
 import { Roles } from '../decorators/role.decorator';
 import { IsPublic } from '../decorators/is-public.decorator';
 import { ResponseMessage } from '../utils/responseMessage.util';
-import {type Request, type Response} from "express";
+import { type Request, type Response } from 'express';
 import { ChangeUserPasswordDto } from './dto/changeUserPasswordDto';
 import { EditUserProfile } from './dto/editUserProfile';
 import { LoginUserDto } from './dto/loginUserDto';
 import { SignupUserDto } from './dto/signupUserDto';
+import { ChangeUserRoleDto } from './dto/changeUserRole.dto';
 import { CurrentUser } from '../decorators/user.decorator';
 import { UserInfo } from '../models/userInfo.model';
+import { TokenJwt } from '../utils/tokenJwt.util';
 
 @Controller('auth')
 export class AuthController {
@@ -28,6 +22,12 @@ export class AuthController {
   @Patch('/change-password')
   async changeUserPassword(@Body() changePasswordDto: ChangeUserPasswordDto) {
     return await this.authService.changeUserPassword(changePasswordDto);
+  }
+
+  @Roles('Admin')
+  @Patch('/change-role')
+  async changeUserRole(@Body() changeUserRoleDto: ChangeUserRoleDto) {
+    return await this.authService.changeUserRole(changeUserRoleDto);
   }
 
   @Roles('Admin', 'User')
@@ -40,13 +40,24 @@ export class AuthController {
   @Post('/login')
   async loginUser(
     @Body() loginDto: LoginUserDto,
+    @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
+    console.log("I am in login-user")
     //----> Get token.
-    const accessToken = await this.authService.loginUser(loginDto, res);
+    const session = await this.authService.loginUser(loginDto, res);
+
+    //-----> Attach tokenJwt to req.user;
+    const tokenJwt: TokenJwt = {
+      id: session.id,
+      name: session.name,
+      email: session.email,
+      role: session.role,
+    };
+    req.user = tokenJwt;
 
     //----> Send back access-token;
-    res.status(StatusCodes.OK).json(accessToken);
+    res.status(StatusCodes.OK).json(session);
   }
 
   @IsPublic()
@@ -60,6 +71,9 @@ export class AuthController {
 
     //----> Logout user.
     await this.authService.logoutUser(req, res);
+
+    //----> Remove the tokenJwt from req.user;
+    req.user = null;
 
     //----> send back the response.
     res
@@ -77,10 +91,11 @@ export class AuthController {
   @Get('/me')
   async getCurrentUser(@CurrentUser() user: UserInfo) {
     //----> Get the user-id from the user payload.
-    const id = user.id;
+    const email = user.email;
+    console.log('In auth-controller, email : ', email);
 
     //----> Get the current user from the database,
-    return await this.authService.getCurrentUser(id);
+    return await this.authService.getCurrentUser(email);
   }
 
   @IsPublic()

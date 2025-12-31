@@ -41,7 +41,6 @@ export class CustomerDto {
   @IsString()
   notes: string;
 
-  @IsNotEmpty()
-  @IsString()
+  @IsOptional()
   userId: string;
 }

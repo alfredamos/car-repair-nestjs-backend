@@ -5,7 +5,7 @@ declare global {
     namespace Express {
         interface Request {
             // Replace 'any' with your User interface/type
-            user: UserInfo;
+            user: UserInfo | null;
         }
     }
 }

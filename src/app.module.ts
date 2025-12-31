@@ -12,6 +12,8 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { ConfigModule } from '@nestjs/config';
 import { RolesGuard } from './guards/roles.guard';
+import { SameUserEmailOrAdminGuard } from './guards/sameUserEmailOrAdmin.guard';
+import { SameUserIdOrAdminGuard } from './guards/sameUserIdOrAdmin.guard';
 
 
 @Module({
@@ -35,6 +37,14 @@ import { RolesGuard } from './guards/roles.guard';
     {
       provide: APP_GUARD,
       useClass: RolesGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: SameUserEmailOrAdminGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: SameUserIdOrAdminGuard,
     },
     PrismaService
   ],

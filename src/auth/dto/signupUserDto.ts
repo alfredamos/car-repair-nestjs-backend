@@ -8,10 +8,6 @@ export class SignupUserDto {
 
   @IsNotEmpty()
   @IsString()
-  address: string;
-
-  @IsNotEmpty()
-  @IsString()
   @IsEmail()
   email: string;
 
@@ -34,10 +30,6 @@ export class SignupUserDto {
   @IsNotEmpty()
   @IsString()
   confirmPassword: string;
-
-  @IsNotEmpty()
-  @IsString()
-  dateOfBirth: Date;
 
   @IsNotEmpty()
   @IsEnum(Role)

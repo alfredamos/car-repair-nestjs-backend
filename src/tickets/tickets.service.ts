@@ -9,6 +9,7 @@ import { TicketDto } from './dto/ticketDto.dto';
 @Injectable()
 export class TicketsService {
   constructor(private prisma: PrismaService){}
+  
   async changeTicketStatus(id: string) {
     //----> Fetch ticket by given id.
     const ticket = await this.getOneTicket(id);

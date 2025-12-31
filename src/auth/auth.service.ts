@@ -192,7 +192,7 @@ export class AuthService {
     const { email, password, confirmPassword } = signup;
 
     //----> Check for password match.
-    if (this.checkForMatchPassword(password, confirmPassword)) {
+    if (!this.checkForMatchPassword(password, confirmPassword)) {
       throw new UnauthorizedException('Passwords do not match!');
     }
 
@@ -298,7 +298,7 @@ export class AuthService {
 
   private async getUserByEmail(email: string) {
     const user = await this.prisma.user.findUnique({ where: { email } });
-
+    console.log("In get-user-by-email")
     //----> Check for null user.
     if (!user) {
       throw new UnauthorizedException('Invalid credentials!');

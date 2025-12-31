@@ -8,7 +8,12 @@ async function bootstrap() {
   //----> Apply cookie-parser middleware
   app.use(cookieParser());
   app.setGlobalPrefix('api');
-  app.enableCors(['http://localhost:4200', 'http://localhost:5173']);
+  //
+  app.enableCors({
+    origin: ['http://localhost:4200', 'http://localhost:5173'],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   await app.listen(process.env.PORT ?? 3000);
 }
