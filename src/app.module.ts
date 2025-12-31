@@ -38,14 +38,14 @@ import { SameUserIdOrAdminGuard } from './guards/sameUserIdOrAdmin.guard';
       provide: APP_GUARD,
       useClass: RolesGuard,
     },
-    {
-      provide: APP_GUARD,
-      useClass: SameUserEmailOrAdminGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: SameUserIdOrAdminGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: SameUserEmailOrAdminGuard,
+    // },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: SameUserIdOrAdminGuard,
+    // },
     PrismaService
   ],
 })

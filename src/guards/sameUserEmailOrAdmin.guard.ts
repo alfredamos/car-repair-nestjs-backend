@@ -2,15 +2,11 @@ import {
   CanActivate,
   ExecutionContext,
   ForbiddenException,
-  Injectable,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { Role } from '../generated/prisma/enums';
-import { AuthService } from '../auth/auth.service';
 
-@Injectable()
 export class SameUserEmailOrAdminGuard implements CanActivate {
-  constructor(public authService: AuthService) {}
   canActivate(context: ExecutionContext): boolean {
     //----> Get the request object.
     const req: Request = context.switchToHttp().getRequest<Request>(); //----> Retrieve all objects on request object.
@@ -19,9 +15,9 @@ export class SameUserEmailOrAdminGuard implements CanActivate {
     const emailFromParam = req.params.email;
 
     //----> Get the user id from the user object on request object.
-    const session = this.authService.getSession(req);
-    const emailFromContext = session.email;
-    const role = session.role;
+    const tokenJwt = req.user;
+    const emailFromContext = tokenJwt?.email as string;
+    const role = tokenJwt?.role;
     console.log('In same-user-email, role : ', role);
     //----> Check for same user via equality of the two user-ids.
     const sameUser = this.isSameUser(emailFromContext, emailFromParam);

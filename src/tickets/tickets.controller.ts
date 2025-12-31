@@ -1,9 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, ForbiddenException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards} from '@nestjs/common';
 import { TicketsService } from './tickets.service';
 import { Roles } from '../decorators/role.decorator';
 import { TicketDto } from './dto/ticketDto.dto';
-import { Request } from 'express';
-import { Role } from '../generated/prisma/enums';
+import { SameUserEmailOrAdminGuard } from '../guards/sameUserEmailOrAdmin.guard';
 
 @Controller('tickets')
 export class TicketsController {
@@ -65,34 +64,11 @@ export class TicketsController {
     return await this.ticketsService.getTicketsByCustomerId(customerId);
   }
 
-  @Roles('Admin')
+  @Roles('Admin', 'User')
+  @UseGuards(SameUserEmailOrAdminGuard)
   @Get('get-tickets-by-user-email/:email')
-  async getTicketsByUserEmail(@Param('email') email: string, @Req() req: Request) {
-    this.sameUserByEmailOrAdmin(req, email)
+  async getTicketsByUserEmail(@Param('email') email: string) {
     return await this.ticketsService.getTicketsByUserEmail(email);
   }
 
-  sameUserByEmailOrAdmin(@Req() req: Request, email: string){
-    //----> Get session.
-    const tokenJwt = req.user;
-    const role = tokenJwt?.role;
-    const emailFormTokenJwt = tokenJwt?.email;
-
-    //----> Same user.
-    const isSameUser = email.normalize() === emailFormTokenJwt?.normalize();
-
-    //----> Admin.
-    const isAdmin = role === Role.Admin;
-
-    console.log("same-user-by-email-or-admin, isAdmin : ", isAdmin);
-    console.log("same-user-by-email-or-admin, isSameUser : ", isSameUser);
-
-    //----> Not admin and not same user.
-    if (!isAdmin && !isSameUser){
-      throw new ForbiddenException("You don't have permission to view or perform this action!")
-    }
-
-    //----> Move on.
-    return true;
-  }
 }

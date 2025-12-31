@@ -43,7 +43,7 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    console.log("I am in login-user")
+    console.log('I am in login-user');
     //----> Get token.
     const session = await this.authService.loginUser(loginDto, res);
 
@@ -54,7 +54,8 @@ export class AuthController {
       email: session.email,
       role: session.role,
     };
-    req.user = tokenJwt;
+    req.user = {...tokenJwt};
+    console.log('I have loggedIn, user : ', req.user);
 
     //----> Send back access-token;
     res.status(StatusCodes.OK).json(session);
@@ -74,6 +75,7 @@ export class AuthController {
 
     //----> Remove the tokenJwt from req.user;
     req.user = null;
+    console.log('I have logged out, user : ', req.user);
 
     //----> send back the response.
     res
