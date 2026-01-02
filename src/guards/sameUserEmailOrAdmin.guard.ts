@@ -18,24 +18,11 @@ export class SameUserEmailOrAdminGuard implements CanActivate {
     const tokenJwt = req.user;
     const emailFromContext = tokenJwt?.email as string;
     const role = tokenJwt?.role;
-    console.log('In same-user-email, role : ', role);
     //----> Check for same user via equality of the two user-ids.
     const sameUser = this.isSameUser(emailFromContext, emailFromParam);
 
     //----> Check for admin privilege.
     const isAdmin = role === Role.Admin;
-
-    console.log('In same-user-or-admin-guard, sameUser : ', sameUser);
-    console.log('In same-user-or-admin-guard, isAdmin : ', isAdmin);
-    console.log(
-      'In same-user-or-admin-guard, emailFromParam : ',
-      emailFromParam,
-    );
-    console.log(
-      'In same-user-or-admin-guard, emailFromContext : ',
-      emailFromContext,
-    );
-
     if (!sameUser && !isAdmin) {
       throw new ForbiddenException(
         "You don't have permission to view or perform this action!",

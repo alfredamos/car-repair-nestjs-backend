@@ -27,7 +27,6 @@ export class AuthService {
     private readonly tokenService: TokensService,
   ) {}
   async changeUserPassword(changePassword: ChangeUserPasswordDto) {
-    console.log('In changeUserPassword, payload : ', changePassword);
     //----> Destructure the changePassword object
     const { email, confirmPassword, password, newPassword } = changePassword;
 
@@ -298,7 +297,6 @@ export class AuthService {
 
   private async getUserByEmail(email: string) {
     const user = await this.prisma.user.findUnique({ where: { email } });
-    console.log("In get-user-by-email")
     //----> Check for null user.
     if (!user) {
       throw new UnauthorizedException('Invalid credentials!');

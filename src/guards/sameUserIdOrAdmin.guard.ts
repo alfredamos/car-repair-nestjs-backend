@@ -26,18 +26,6 @@ export class SameUserIdOrAdminGuard implements CanActivate {
 
     //----> Check for admin privilege.
     const isAdmin = role === Role.Admin;
-
-    console.log('In same-user-or-admin-guard, sameUser : ', sameUser);
-    console.log('In same-user-or-admin-guard, isAdmin : ', isAdmin);
-    console.log(
-      'In same-user-or-admin-guard, userIdFromParam : ',
-      userIdFromParam,
-    );
-    console.log(
-      'In same-user-or-admin-guard, userIdFromContext : ',
-      userIdFromContext,
-    );
-
     if (!sameUser && !isAdmin) {
       throw new ForbiddenException(
         "You don't have permission to view or perform this action!",

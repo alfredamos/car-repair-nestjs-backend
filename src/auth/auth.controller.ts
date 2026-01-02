@@ -43,7 +43,6 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    console.log('I am in login-user');
     //----> Get token.
     const session = await this.authService.loginUser(loginDto, res);
 
@@ -70,7 +69,7 @@ export class AuthController {
     const accessToken = req.headers.cookie
       ? req.headers.cookie.substring(12).split(';')[0]
       : '';
-
+    
     //----> Logout user.
     const response = await this.authService.logoutUser(req, res);
 
@@ -96,7 +95,6 @@ export class AuthController {
   async getCurrentUser(@CurrentUser() user: UserInfo) {
     //----> Get the user-id from the user payload.
     const email = user.email;
-    console.log('In auth-controller, email : ', email);
 
     //----> Get the current user from the database,
     return await this.authService.getCurrentUser(email);
